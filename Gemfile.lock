@@ -56,6 +56,16 @@ GEM
       sassc (>= 2.0.0)
     builder (3.2.3)
     byebug (11.0.0)
+    capybara (3.16.1)
+      addressable
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (~> 1.2)
+      xpath (~> 3.2)
+    childprocess (0.9.0)
+      ffi (~> 1.0, >= 1.0.11)
     cocoon (1.2.12)
     concurrent-ruby (1.1.4)
     crass (1.0.4)
@@ -132,6 +142,7 @@ GEM
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
+    net_http_ssl_fix (0.0.10)
     nio4r (2.3.1)
     nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
@@ -194,6 +205,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
+    regexp_parser (1.4.0)
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
@@ -217,6 +229,7 @@ GEM
     ruby_dep (1.5.0)
     ruby_parser (3.12.0)
       sexp_processor (~> 4.9)
+    rubyzip (1.2.2)
     sassc (2.0.0)
       ffi (~> 1.9.6)
       rake
@@ -226,6 +239,9 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    selenium-webdriver (3.141.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.2, >= 1.2.2)
     sexp_processor (4.11.0)
     simple_form (4.1.0)
       actionpack (>= 5.0)
@@ -258,9 +274,16 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
+    webdrivers (3.7.2)
+      net_http_ssl_fix
+      nokogiri (~> 1.6)
+      rubyzip (~> 1.0)
+      selenium-webdriver (~> 3.0)
     websocket-driver (0.7.0)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
 
 PLATFORMS
   ruby
@@ -269,6 +292,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   bootstrap-sass
   byebug
+  capybara
   cocoon
   devise
   dotenv-rails
@@ -286,12 +310,14 @@ DEPENDENCIES
   rails (~> 5.2.2)
   rspec-rails
   sassc-rails
+  selenium-webdriver
   simple_form
   spring
   spring-watcher-listen
   turbolinks
   tzinfo-data
   web-console
+  webdrivers
 
 RUBY VERSION
    ruby 2.6.1p33

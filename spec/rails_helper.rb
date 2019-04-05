@@ -58,4 +58,34 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.before(:each) do |example|
+    if example.metadata[:type] == :system
+      if example.metadata[:js]
+        driven_by :selenium, using: :headless_chrome, screen_size: [1024, 1024]
+      else
+        driven_by :rack_test
+      end
+    end
+  end
+
+  config.include Devise::Test::IntegrationHelpers, type: :system
+end
+
+OmniAuth.configure do |config|
+  config.test_mode = true
+  config.mock_auth[:google] = OmniAuth::AuthHash.new(
+    {
+      provider: 'google',
+      uid: '100000000000000000000',
+      info: {
+        email: 'john@example.com',
+        name: 'John'
+      },
+      credentials: {
+        token: '0000.000000000000000000000000000000000000000000000...'
+      },
+      to_yaml: "--- !ruby/hash:OmniAuth::AuthHash\nprovider: :googl..."
+    }
+  )
 end
