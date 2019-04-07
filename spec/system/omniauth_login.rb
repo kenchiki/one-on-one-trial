@@ -9,6 +9,7 @@ RSpec.describe 'OmniAuth Login', type: :system do
 
     click_on 'Signin with Google'
     sleep 1
+    expect(page).to have_content 'Google アカウントによる認証に成功しました。'
     expect(page).to have_content 'Login as john@example.com'
 
     click_on 'ログアウト'
