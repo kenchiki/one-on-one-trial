@@ -22,7 +22,12 @@ RSpec.describe 'Question CRUD', type: :system, js: true do
   it 'is able to CRUD question.' do
     click_on '質問ボードを作成する'
     expect(current_path).to eq new_loggedin_question_board_path
+    expect(page).to have_content '質問ボードを作成する'
+    expect(page).to have_field 'Title', with: nil
+
     question_block = find(:xpath, "//p[text()='質問']/following-sibling::div[@class='form-inputs']")
+    expect(question_block).to have_link '質問を追加する'
+    expect(question_block).to have_no_field
 
     fill_in 'Title', with: 'CRUD Testing'
 
@@ -133,5 +138,28 @@ RSpec.describe 'Question CRUD', type: :system, js: true do
     question_row.click_on '削除'
     page.driver.browser.switch_to.alert.accept
     expect(page).to have_no_link 'CRUD Question Board (edited)'
+  end
+
+  it 'is able to validate question title.' do
+    click_on '質問ボードを作成する'
+    expect(current_path).to eq new_loggedin_question_board_path
+    expect(page).to have_content '質問ボードを作成する'
+    expect(page).to have_field 'Title', with: nil
+
+    click_on '登録する'
+
+    expect(page).to have_selector 'div.alert', text: 'Please review the problems below:'
+  
+    feedback = find_field('Title').find(:xpath, "./following-sibling::div[@class='invalid-feedback']")
+    expect(feedback.text).to eq 'Titleを入力してください'
+
+    fill_in 'Title', with: 'Validation Testing'
+
+    click_on '登録する'
+    question_board_id = QuestionBoard.last!.id
+
+    expect(current_path).to eq loggedin_question_board_path(question_board_id)
+    expect(page).to have_content 'Question board was successfully created.'
+    expect(page).to have_content 'Validation Testing'
   end
 end
