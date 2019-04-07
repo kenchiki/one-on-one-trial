@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Basic Scenario', type: :system do
+RSpec.describe 'Basic Scenario', type: :system, js: true do
   let(:sent_mail) { ActionMailer::Base.deliveries.last }
   let(:sent_mail_body) { sent_mail.body.raw_source }
 
@@ -15,7 +15,7 @@ RSpec.describe 'Basic Scenario', type: :system do
     ActionMailer::Base.default_url_options = url_options
   end
 
-  it 'is able to register question & answer.', js: true do
+  it 'is able to register question & answer.' do
     visit root_url
     expect(page).to have_content '1 ON 1'
 
@@ -60,53 +60,19 @@ RSpec.describe 'Basic Scenario', type: :system do
     click_on '登録する'
     question_board_id = QuestionBoard.last!.id
 
-    # FIXME: is there nice method to verify uri?
+    # FIXME: IDを含むURIの、よりよい判定方法はないか？
     expect(current_path).to eq loggedin_question_board_path(question_board_id)
     expect(page).to have_content 'Basic Questions'
     expect(page).to have_content 'Is this 1st question?'
     expect(page).to have_content 'Is this 2nd question?'
     expect(page).to have_content 'Is this 3rd question?'
 
-    click_on '編集する'
-
-    expect(current_path).to eq edit_loggedin_question_board_path(question_board_id)
-    expect(page).to have_field 'Title', with: 'Basic Questions'
-    question_block = find(:xpath, "//p[text()='質問']/following-sibling::div[@class='form-inputs']")
-    question_fields = question_block.all("input[type='text']")
-    expect(question_fields.count).to eq 3
-    expect(question_fields[0].value).to eq 'Is this 1st question?'
-    expect(question_fields[1].value).to eq 'Is this 2nd question?'
-    expect(question_fields[2].value).to eq 'Is this 3rd question?'
-
-    fill_in 'Title', with: 'Basic (edited) Questions'
-    question_fields[0].fill_in with: 'This is edited 1st question.'
-    question_fields[1].find(:xpath, '../..').click_on '削除'
-    question_fields = question_block.all("input[type='text']")
-    expect(question_fields.count).to eq 2
-    expect(question_fields).to have_no_field with: 'Is this 2nd question?'
-
-    click_on '質問を追加する'
-    question_fields = question_block.all("input[type='text']")
-    expect(question_fields.count).to eq 3
-    expect(question_fields.last.value).to be_blank
-    question_fields.last.fill_in with: 'Is this added(4th) question?'
-
-    click_on '更新する'
-
-    # FIXME: is there nice method to verify uri?
-    expect(current_path).to eq loggedin_question_board_path(question_board_id)
-    expect(page).to have_content 'Basic (edited) Questions'
-    expect(page).to have_content 'This is edited 1st question.'
-    expect(page).to have_no_content 'Is this 2nd question?'
-    expect(page).to have_content 'Is this 3rd question?'
-    expect(page).to have_content 'Is this added(4th) question?'
-
     click_on '戻る'
 
     expect(current_path).to eq loggedin_question_boards_path
-    expect(page).to have_content 'Basic (edited) Questions'
+    expect(page).to have_content 'Basic Questions'
 
-    question_row = find(:xpath, "//a[text()='Basic (edited) Questions']/parent::td/parent::tr")
+    question_row = find(:xpath, "//a[text()='Basic Questions']/parent::td/parent::tr")
     question_row.click_on '回答してもらう'
   
     expect(current_path).to eq new_loggedin_question_board_answer_board_path(question_board_id)
@@ -133,17 +99,17 @@ RSpec.describe 'Basic Scenario', type: :system do
 
     expect(page).to have_content '質問に回答する'
     expect(page).to have_field 'Name', with: nil
-    expect(page).to have_content 'This is edited 1st question.'
+    expect(page).to have_content 'Is this 1st question?'
+    expect(page).to have_content 'Is this 2nd question?'
     expect(page).to have_content 'Is this 3rd question?'
-    expect(page).to have_content 'Is this added(4th) question?'
 
     question_block = find(:xpath, "//p[text()='質問']/following-sibling::div[@class='form-inputs']")
     expect(question_block).to have_selector 'textarea', count: 3
-    question1 = question_block.find(:xpath, "./p[text()='This is edited 1st question.']/following-sibling::div[position()=1]")
+    question1 = question_block.find(:xpath, "./p[text()='Is this 1st question?']/following-sibling::div[position()=1]")
     expect(question1).to have_field with: nil
-    question2 = question_block.find(:xpath, "./p[text()='Is this 3rd question?']/following-sibling::div[position()=1]")
+    question2 = question_block.find(:xpath, "./p[text()='Is this 2nd question?']/following-sibling::div[position()=1]")
     expect(question2).to have_field with: nil
-    question3 = question_block.find(:xpath, "./p[text()='Is this added(4th) question?']/following-sibling::div[position()=1]")
+    question3 = question_block.find(:xpath, "./p[text()='Is this 3rd question?']/following-sibling::div[position()=1]")
     expect(question3).to have_field with: nil
 
     fill_in 'Name', with: 'Ada Wong'
@@ -167,11 +133,11 @@ RSpec.describe 'Basic Scenario', type: :system do
     expect(page).to have_field 'Name', with: 'Ada Wong'
 
     question_block = find(:xpath, "//p[text()='質問']/following-sibling::div[@class='form-inputs']")
-    question1 = question_block.find(:xpath, "./p[text()='This is edited 1st question.']/following-sibling::div[position()=1]")
+    question1 = question_block.find(:xpath, "./p[text()='Is this 1st question?']/following-sibling::div[position()=1]")
     expect(question1).to have_field with: '1st answer.'
-    question2 = question_block.find(:xpath, "./p[text()='Is this 3rd question?']/following-sibling::div[position()=1]")
+    question2 = question_block.find(:xpath, "./p[text()='Is this 2nd question?']/following-sibling::div[position()=1]")
     expect(question2).to have_field with: '2nd answer.'
-    question3 = question_block.find(:xpath, "./p[text()='Is this added(4th) question?']/following-sibling::div[position()=1]")
+    question3 = question_block.find(:xpath, "./p[text()='Is this 3rd question?']/following-sibling::div[position()=1]")
     expect(question3).to have_field with: '3rd answer.'
 
     fill_in 'Name', with: 'エイダ・ウォン'
