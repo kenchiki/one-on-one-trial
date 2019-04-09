@@ -74,6 +74,11 @@ end
 
 OmniAuth.configure do |config|
   config.test_mode = true
+  # systemを書いても手動でテストはよくする
+  # railsのバージョンアップなどするときは実際に触ってテストしておきたい
+
+  # omniauth_providersを追加するだけで、他のproviderを追加できる
+  # lineだとemailがnilになる可能性があるので、全て追加した方がいいかも
   config.mock_auth[:google] = OmniAuth::AuthHash.new(
     {
       provider: 'google',
